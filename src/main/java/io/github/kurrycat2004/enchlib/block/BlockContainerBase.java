@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.block;
+package io.github.kurrycat2004.enchlib.block;
 
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;

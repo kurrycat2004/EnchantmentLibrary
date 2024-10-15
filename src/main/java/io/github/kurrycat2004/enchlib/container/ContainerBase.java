@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.container;
+package io.github.kurrycat2004.enchlib.container;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

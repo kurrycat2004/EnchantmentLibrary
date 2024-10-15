@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.gui;
+package io.github.kurrycat2004.enchlib.gui.components;
 
 public interface IMouseHandler {
     boolean onMouseScroll(int mouseX, int mouseY, int delta);

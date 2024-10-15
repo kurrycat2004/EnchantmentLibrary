@@ -1,6 +1,6 @@
 {
   "credit": "Made with Blockbench",
-  "parent": "block/block",
+  "parent": "block/cube_all",
   "texture_size": [64, 64],
   "textures": {
     "0": "enchlib:blocks/block_enchantment_library",
@@ -11,7 +11,7 @@
       "name": "back",
       "from": [2, 0, 14],
       "to": [14, 16, 16],
-      "rotation": {"angle": 0, "axis": "y", "origin": [2, 0, 16]},
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 15]},
       "faces": {
         "north": {"uv": [8.5, 4, 11.5, 8], "texture": "#0"},
         "south": {"uv": [8.5, 0, 11.5, 4], "texture": "#0", "cullface": "south"},
@@ -23,7 +23,7 @@
       "name": "bottom",
       "from": [2, 0, 0],
       "to": [14, 2, 14],
-      "rotation": {"angle": 0, "axis": "x", "origin": [2, 2, 16]},
+      "rotation": {"angle": 0, "axis": "x", "origin": [8, 1, 7]},
       "faces": {
         "north": {"uv": [12.5, 4, 15.5, 4.5], "texture": "#0", "cullface": "north"},
         "up": {"uv": [15.5, 4, 12.5, 0.5], "texture": "#0"},
@@ -34,7 +34,7 @@
       "name": "left",
       "from": [14, 0, 0],
       "to": [16, 16, 16],
-      "rotation": {"angle": 0, "axis": "y", "origin": [14, 0, 0]},
+      "rotation": {"angle": 0, "axis": "y", "origin": [15, 8, 8]},
       "faces": {
         "north": {"uv": [12, 0, 12.5, 4], "texture": "#0", "cullface": "north"},
         "east": {"uv": [0, 0, 4, 4], "texture": "#0", "cullface": "east"},
@@ -48,6 +48,7 @@
       "name": "right",
       "from": [0, 0, 0],
       "to": [2, 16, 16],
+      "rotation": {"angle": 0, "axis": "y", "origin": [1, 8, 8]},
       "faces": {
         "north": {"uv": [15.5, 0, 16, 4], "texture": "#0", "cullface": "north"},
         "east": {"uv": [0, 4, 4, 8], "texture": "#0"},
@@ -61,7 +62,7 @@
       "name": "top",
       "from": [2, 14, 0],
       "to": [14, 16, 14],
-      "rotation": {"angle": 0, "axis": "y", "origin": [2, 16, 16]},
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 15, 7]},
       "faces": {
         "north": {"uv": [12.5, 0, 15.5, 0.5], "texture": "#0", "cullface": "north"},
         "up": {"uv": [7.5, 4, 4.5, 0.5], "texture": "#0", "cullface": "up"},
@@ -72,7 +73,7 @@
       "name": "middle",
       "from": [2, 7, 1],
       "to": [14, 9, 14],
-      "rotation": {"angle": 0, "axis": "y", "origin": [2, 9, 17]},
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 7.5]},
       "faces": {
         "north": {"uv": [0, 8, 3, 8.5], "texture": "#0", "cullface": "north"},
         "up": {"uv": [3, 11.75, 0, 8.5], "texture": "#0", "cullface": "north"},
@@ -111,7 +112,7 @@
       "name": "book",
       "from": [8.5, 9, 2],
       "to": [13.5, 11, 6],
-      "rotation": {"angle": 0, "axis": "z", "origin": [11, 10.5, 4]},
+      "rotation": {"angle": 0, "axis": "z", "origin": [11, 10, 4]},
       "faces": {
         "north": {"uv": [4, 10.5, 4.5, 11.75], "texture": "#0", "cullface": "north"},
         "east": {"uv": [6.5, 10.5, 7, 11.5], "texture": "#0", "cullface": "north"},

@@ -1,7 +1,7 @@
-package io.github.kurrycat2004.enchlib.objects.container;
+package io.github.kurrycat2004.enchlib.container;
 
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
-import io.github.kurrycat2004.enchlib.objects.tile.TileEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
 import io.github.kurrycat2004.enchlib.util.MouseUtil;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;

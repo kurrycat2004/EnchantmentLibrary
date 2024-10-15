@@ -1,9 +1,11 @@
 package io.github.kurrycat2004.enchlib;
 
 import io.github.kurrycat2004.enchlib.config.ConfigManager;
-import io.github.kurrycat2004.enchlib.objects.GuiHandler;
+import io.github.kurrycat2004.enchlib.gui.GuiHandler;
+import io.github.kurrycat2004.enchlib.proxy.IProxy;
 import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +16,7 @@ import org.apache.logging.log4j.Logger;
         version = Tags.VERSION,
         name = Tags.MODNAME,
         acceptedMinecraftVersions = "[1.12.2]",
-        guiFactory = "io.github.kurrycat2004.enchlib.config.GuiFactory"
+        guiFactory = Tags.MODGROUP + ".config.GuiFactory"
 )
 public class EnchLibMod {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
@@ -22,10 +24,15 @@ public class EnchLibMod {
     @Mod.Instance
     public static EnchLibMod INSTANCE;
 
+    @SidedProxy(clientSide = Tags.MODGROUP + ".proxy.ClientProxy", serverSide = Tags.MODGROUP + ".proxy.ServerProxy")
+    public static IProxy proxy;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         Items.ENCHANTED_BOOK.setMaxStackSize(64);
         ConfigManager.preInit(event);
+
+        proxy.preInit(event);
     }
 
     @Mod.EventHandler

@@ -1,13 +1,14 @@
-package io.github.kurrycat2004.enchlib.objects.block;
+package io.github.kurrycat2004.enchlib.block;
 
 import io.github.kurrycat2004.enchlib.EnchLibMod;
 import io.github.kurrycat2004.enchlib.Tags;
-import io.github.kurrycat2004.enchlib.objects.GuiHandler;
-import io.github.kurrycat2004.enchlib.objects.tile.TileEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.gui.GuiHandler;
+import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +42,22 @@ public class BlockEnchantmentLibrary extends BlockContainerBase {
 
     @Override
     @SuppressWarnings("deprecation")
+    public boolean hasCustomBreakingProgress(IBlockState state) {
+        return true;
+    }
+
+    //TODO: fix breaking texture (separate into 16x16 textures)
+    @Override
+    @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        if (face == state.getValue(FACING)) return BlockFaceShape.UNDEFINED;
+        return BlockFaceShape.SOLID;
     }
 
     @Override

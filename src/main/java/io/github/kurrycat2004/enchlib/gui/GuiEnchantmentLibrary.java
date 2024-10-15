@@ -1,9 +1,10 @@
-package io.github.kurrycat2004.enchlib.objects.gui;
+package io.github.kurrycat2004.enchlib.gui;
 
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.common.EnchData;
-import io.github.kurrycat2004.enchlib.objects.container.ContainerEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.objects.tile.TileEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.gui.components.GuiList;
+import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.BigIntegerUtil;
 import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
 import io.github.kurrycat2004.enchlib.util.GuiUtil;

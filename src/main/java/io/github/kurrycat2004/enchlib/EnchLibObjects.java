@@ -1,8 +1,9 @@
 package io.github.kurrycat2004.enchlib;
 
-import io.github.kurrycat2004.enchlib.objects.block.BlockEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.objects.item.ItemBlockBase;
-import io.github.kurrycat2004.enchlib.objects.tile.TileEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.block.BlockEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.item.ItemBlockBase;
+import io.github.kurrycat2004.enchlib.render.ModelDamageTESR;
+import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -12,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -43,6 +45,11 @@ public class EnchLibObjects {
     @NonnullByDefault
     @Mod.EventBusSubscriber(modid = Tags.MODID, value = Side.CLIENT)
     public static class Client {
+        public static void registerTESRs() {
+            EnchLibMod.LOGGER.info("Registering TESRs");
+            ClientRegistry.bindTileEntitySpecialRenderer(TileEnchantmentLibrary.class, new ModelDamageTESR());
+        }
+
         @SubscribeEvent
         public static void registerModels(ModelRegistryEvent evt) {
             registerCustomModel(new ItemStack(ENCHANTMENT_LIBRARY), ENCHANTMENT_LIBRARY.getRegistryName(), "inventory");

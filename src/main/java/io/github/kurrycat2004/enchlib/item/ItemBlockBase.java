@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.item;
+package io.github.kurrycat2004.enchlib.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;

@@ -1,8 +1,7 @@
-package io.github.kurrycat2004.enchlib.objects;
+package io.github.kurrycat2004.enchlib.gui;
 
 import io.github.kurrycat2004.enchlib.EnchLibMod;
-import io.github.kurrycat2004.enchlib.objects.container.ContainerEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.objects.gui.GuiEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

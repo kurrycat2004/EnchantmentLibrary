@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.gui;
+package io.github.kurrycat2004.enchlib.gui.components;
 
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.util.GuiUtil;

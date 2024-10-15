@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.objects.block;
+package io.github.kurrycat2004.enchlib.block;
 
 import net.minecraft.world.IWorldNameable;
 

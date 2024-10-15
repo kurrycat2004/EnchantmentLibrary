@@ -1,9 +1,9 @@
-package io.github.kurrycat2004.enchlib.objects.tile;
+package io.github.kurrycat2004.enchlib.tile;
 
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
 import io.github.kurrycat2004.enchlib.common.EnchLibData;
-import io.github.kurrycat2004.enchlib.objects.block.INameable;
-import io.github.kurrycat2004.enchlib.objects.gui.GuiEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.block.INameable;
+import io.github.kurrycat2004.enchlib.gui.GuiEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import io.github.kurrycat2004.enchlib.util.interfaces.INBTSerDe;
 import io.github.kurrycat2004.enchlib.util.interfaces.ISavable;
@@ -151,6 +151,11 @@ public class TileEnchantmentLibrary extends TileEntity implements INBTSerDe, INa
     @Override
     public @NotNull ITextComponent getDisplayName() {
         return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+    }
+
+    @Override
+    public boolean canRenderBreaking() {
+        return true;
     }
 }
 
