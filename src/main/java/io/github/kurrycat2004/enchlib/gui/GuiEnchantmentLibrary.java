@@ -4,6 +4,7 @@ import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.common.EnchData;
 import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.gui.components.GuiList;
+import io.github.kurrycat2004.enchlib.gui.components.GuiSearchField;
 import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.BigIntegerUtil;
 import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
@@ -14,7 +15,6 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -46,7 +46,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
     private static final ResourceLocation TEXTURE = new ResourceLocation(Tags.MODID, "textures/gui/enchantment_library.png");
     private final TileEnchantmentLibrary tile;
     private final EnchList enchList;
-    private GuiTextField searchField;
+    private GuiSearchField searchField;
 
     private static final int SEARCH_COLOR = 0xFFFFFFFF;
     private static final int SEARCH_COLOR_ERROR = 0xFFFF0000;
@@ -70,7 +70,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
     public void initGui() {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
-        this.searchField = new GuiTextField(0, this.fontRenderer,
+        this.searchField = new GuiSearchField(0, this.fontRenderer,
                 this.guiLeft + 8, this.guiTop + 92, 160, 11);
         this.searchField.setGuiResponder(this);
         this.searchField.setTextColor(SEARCH_COLOR);
