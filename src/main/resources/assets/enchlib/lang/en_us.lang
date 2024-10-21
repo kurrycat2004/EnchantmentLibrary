@@ -14,7 +14,13 @@ enchlib.config.client_settings.modified_conway_wechsler.tooltip=Changes the ench
 
 # Server config
 enchlib.config.server_settings.allow_enchant_merging=Allow Enchant Merging
-enchlib.config.server_settings.allow_enchant_merging.tooltip=Allows the merging of different enchantments on the same item using the enchantment library
+enchlib.config.server_settings.allow_enchant_merging.tooltip=Allow merging different enchantments onto an enchanted book using the enchantment library when extracting
+enchlib.config.server_settings.allow_enchant_splitting=Allow Enchant Splitting
+enchlib.config.server_settings.allow_enchant_splitting.tooltip=Allow splitting enchanted books with multiple enchantments when inserting into the enchantment library
+enchlib.config.server_settings.enable_ae2uel_hash_fix_mixin=Enable AE2UEL Hash Fix Mixin
+enchlib.config.server_settings.enable_ae2uel_hash_fix_mixin.tooltip=Attempts to fix the ItemStack cache hash collision issues from AE2UEL, by changing the vanilla NBT hashCode functions using a mixin.\nREQUIRES MixinBooter TO WORK!\nDo not disable this unless you know what you're doing. Without this, AE2UEL will think that Protection I = Fire Protection II or Unbreaking III = Efficiency V for example, because they have matching hashes.
+enchlib.config.server_settings.enchanted_book_stack_size=Enchanted Book Stack Size
+enchlib.config.server_settings.enchanted_book_stack_size.tooltip=The maximum stack size for enchanted books. Set to 0 to not overwrite it at all.\nValues over 64 will not really work.
 
 # Blocks
 tile.enchlib.enchantment_library.name=Enchantment Library

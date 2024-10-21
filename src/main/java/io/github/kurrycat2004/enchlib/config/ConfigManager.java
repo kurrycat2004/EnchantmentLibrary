@@ -1,8 +1,10 @@
 package io.github.kurrycat2004.enchlib.config;
 
+import io.github.kurrycat2004.enchlib.EnchLibMod;
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.config.settings.ClientSettings;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
+import io.github.kurrycat2004.enchlib.util.MethodLookupUtil;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.launchwrapper.Launch;
@@ -12,42 +14,45 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Config manager using forge Config annotations, while also allowing top level instance configs. <br>
+ * Configs are split into Client and Server side. <br>
+ * Implementation is greatly inspired by <a href="https://github.com/CleanroomMC/ConfigAnytime">ConfigAnytime</a>
+ */
 @NonnullByDefault
 public class ConfigManager {
     public static Configuration cfg;
     public static File configFile;
 
-    // The following code is taken from the ConfigAnytime project, which is licensed under the MIT License:
-    // https://github.com/CleanroomMC/ConfigAnytime/blob/765cc801b7b3da597cf8c6eb1f6594fd0adb2e71/src/main/java/com/cleanroommc/configanytime/ConfigAnytime.java#L25
     private static final MethodHandle CONFIGMANAGER$SYNC;
 
     static {
         try {
-            Class.forName("net.minecraftforge.common.config.ConfigManager", true, Launch.classLoader); // Init first
-            // Max privilege
-            Field lookup$impl_lookup = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-            lookup$impl_lookup.setAccessible(true);
-            MethodHandles.Lookup lookup = ((MethodHandles.Lookup) lookup$impl_lookup.get(null)).in(net.minecraftforge.common.config.ConfigManager.class);
+            Class.forName("net.minecraftforge.common.config.ConfigManager", true, Launch.classLoader);
+            MethodHandles.Lookup lookup = MethodLookupUtil.lookup(net.minecraftforge.common.config.ConfigManager.class);
             CONFIGMANAGER$SYNC = lookup.findStatic(net.minecraftforge.common.config.ConfigManager.class, "sync", MethodType.methodType(void.class, Configuration.class, Class.class, String.class, String.class, boolean.class, Object.class));
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
-    // End of ConfigAnytime code
 
-    public static void preInit(FMLPreInitializationEvent event) {
-        configFile = new File(event.getModConfigurationDirectory(), Tags.MODID + ".cfg");
+    public static void register() {
+        if (cfg != null) return;
+        init();
+    }
+
+    public static void init() {
+        configFile = new File(getConfigDir(), Tags.MODID + ".cfg");
         cfg = new Configuration(configFile);
         cfg.load();
 
@@ -56,6 +61,21 @@ public class ConfigManager {
 
     public static void save() {
         cfg.save();
+    }
+
+    private static File getConfigDir() {
+        File configDir = new File(Launch.minecraftHome, "config");
+        try {
+            configDir = configDir.getCanonicalFile();
+        } catch (IOException e) {
+            EnchLibMod.LOGGER.fatal("Failed to resolve config directory", e);
+            throw new RuntimeException(e);
+        }
+        if (!configDir.exists() && !configDir.mkdirs()) {
+            EnchLibMod.LOGGER.fatal("Failed to create missing config directory: {}", configDir);
+            throw new RuntimeException("Failed to create missing config directory: " + configDir);
+        }
+        return configDir;
     }
 
     public static List<IConfigElement> getConfigElements(String name, String langKey) {

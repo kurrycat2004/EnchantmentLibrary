@@ -2,6 +2,7 @@ package io.github.kurrycat2004.enchlib.common;
 
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
 import io.github.kurrycat2004.enchlib.EnchLibMod;
+import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
 import io.github.kurrycat2004.enchlib.util.FastOrderedMap;
 import io.github.kurrycat2004.enchlib.util.MathUtil;
@@ -45,8 +46,9 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         this.savable = savable;
     }
 
-    public void markDirty() {
-        this.savable.markDirty();
+    @Override
+    public void markForSave() {
+        this.savable.markForSave();
     }
 
     public FastOrderedMap<Enchantment, EnchData> getMap() {
@@ -109,6 +111,7 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         if (!(stack.getItem() instanceof ItemEnchantedBook)) return stack;
         List<EnchantmentData> enchantments = EnchantmentUtil.getEnchantments(stack);
         if (enchantments.isEmpty()) return stack;
+        if (!ServerSettings.INSTANCE.allowEnchantSplitting && enchantments.size() > 1) return stack;
 
         if (simulate) return ItemStack.EMPTY;
 
@@ -117,7 +120,7 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
             data.addN(stack.getCount(), MathUtil.clampIntToShort(enchData.enchantmentLevel));
         }
 
-        this.markDirty();
+        this.markForSave();
 
         return ItemStack.EMPTY;
     }
@@ -176,7 +179,7 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         stack.setCount(amount - remaining);
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
-        if (!simulate) this.markDirty();
+        if (!simulate) this.markForSave();
         return stack;
     }
 
@@ -185,7 +188,7 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         if (entry == null) return amount;
 
         int remaining = entry.getValue().removeN(amount, level, false);
-        if (remaining != 0) this.markDirty();
+        if (remaining != 0) this.markForSave();
         return remaining;
     }
 
@@ -218,7 +221,7 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         }
 
         existing.setShort(EnchantmentUtil.VANILLA_TAG_LEVEL, level);
-        this.markDirty();
+        this.markForSave();
         return newStack;
     }
 

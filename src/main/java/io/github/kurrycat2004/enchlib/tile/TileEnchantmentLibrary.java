@@ -1,8 +1,8 @@
 package io.github.kurrycat2004.enchlib.tile;
 
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
-import io.github.kurrycat2004.enchlib.common.EnchLibData;
 import io.github.kurrycat2004.enchlib.block.INameable;
+import io.github.kurrycat2004.enchlib.common.EnchLibData;
 import io.github.kurrycat2004.enchlib.gui.GuiEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import io.github.kurrycat2004.enchlib.util.interfaces.INBTSerDe;
@@ -34,6 +34,11 @@ public class TileEnchantmentLibrary extends TileEntity implements INBTSerDe, INa
 
     public TileEnchantmentLibrary() {
         this.data = new EnchLibData(this);
+    }
+
+    @Override
+    public void markForSave() {
+        markDirty();
     }
 
     @Override
