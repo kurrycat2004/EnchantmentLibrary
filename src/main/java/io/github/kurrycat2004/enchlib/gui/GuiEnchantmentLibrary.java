@@ -2,14 +2,13 @@ package io.github.kurrycat2004.enchlib.gui;
 
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.common.EnchData;
+import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
+import io.github.kurrycat2004.enchlib.gui.components.EnchTooltip;
 import io.github.kurrycat2004.enchlib.gui.components.GuiList;
 import io.github.kurrycat2004.enchlib.gui.components.GuiSearchField;
 import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.util.BigIntegerUtil;
-import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
-import io.github.kurrycat2004.enchlib.util.GuiUtil;
-import io.github.kurrycat2004.enchlib.util.LangUtil;
+import io.github.kurrycat2004.enchlib.util.*;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -23,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -293,8 +293,16 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
 
         @Override
         public void drawHovered(int slotIndex, int x, int y, int w, int h, int mouseX, int mouseY, int filterStart, int filterLen) {
-            if (isMouseOverItem(mouseX, mouseY))
+            if (!isMouseOverItem(mouseX, mouseY)) return;
+            ItemStack holding = gui.mc.player.inventory.getItemStack();
+            if (!(holding.getItem() instanceof ItemEnchantedBook) || !ServerSettings.INSTANCE.allowEnchantMerging) {
                 gui.renderToolTip(book, x + mouseX, y + mouseY);
+                return;
+            }
+
+            EnchTooltip.preTooltip(enchantment, level);
+            gui.renderToolTip(holding, x + mouseX, y + mouseY);
+            EnchTooltip.postTooltip();
         }
 
         @Override

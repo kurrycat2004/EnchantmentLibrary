@@ -1,4 +1,4 @@
-package io.github.kurrycat2004.enchlib.mixin;
+package io.github.kurrycat2004.enchlib.mixin.ae2uel;
 
 import io.github.kurrycat2004.enchlib.util.NBTHashUtil;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
