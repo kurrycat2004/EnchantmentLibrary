@@ -46,7 +46,6 @@ public class BlockEnchantmentLibrary extends BlockContainerBase {
         return true;
     }
 
-    //TODO: fix breaking texture (separate into 16x16 textures)
     @Override
     @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(IBlockState state) {

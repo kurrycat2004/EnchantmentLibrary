@@ -325,7 +325,6 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
             ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
             gui.customHandleMouseClick(id, level, button, clickType);
 
-            //TODO
             return true;
         }
 
