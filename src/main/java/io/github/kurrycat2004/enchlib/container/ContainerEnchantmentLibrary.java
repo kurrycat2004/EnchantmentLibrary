@@ -24,25 +24,7 @@ public class ContainerEnchantmentLibrary extends ContainerBase {
         addPlayerInvSlots(inv, PLAYER_INV_Y_OFFSET);
     }
 
-    // This will break horribly if there are more than 2^16 - inventorySlots.size() enchantments stored in the library
-    // But if that happens, you probably have bigger problems
-    public int levelAndEnchantmentIdToSlotId(short level, int enchantmentId) {
-        return level << Short.SIZE | ((enchantmentId + inventorySlots.size()) & 0x0000FFFF);
-    }
-
-    /// The return value here is only used for comparing the client and server result <br>
-    /// The actual item stack is not important, only that it is the same on both sides if, and only if, the action performed was the same
-    @Override
-    public ItemStack slotClick(int slotId, int mouseButton, ClickType clickType, EntityPlayer player) {
-        if (slotId >= inventorySlots.size()) {
-            int enchantmentId = (slotId - inventorySlots.size()) & 0x0000FFFF;
-            short level = (short) ((slotId - inventorySlots.size()) >>> Short.SIZE);
-            return customSlotClick(enchantmentId, level, mouseButton, clickType, player);
-        }
-        return super.slotClick(slotId, mouseButton, clickType, player);
-    }
-
-    private ItemStack customSlotClick(int enchantmentId, short level, int mouseButton, ClickType clickType, EntityPlayer player) {
+    public ItemStack enchLibClick(int enchantmentId, short level, int mouseButton, ClickType clickType, EntityPlayer player) {
         ItemStack held = player.inventory.getItemStack();
         if (!held.isEmpty() && !tile.data.isItemValid(held)) return held;
 

@@ -7,8 +7,13 @@ import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.gui.components.EnchTooltip;
 import io.github.kurrycat2004.enchlib.gui.components.GuiList;
 import io.github.kurrycat2004.enchlib.gui.components.GuiSearchField;
+import io.github.kurrycat2004.enchlib.net.PacketHandler;
+import io.github.kurrycat2004.enchlib.net.packet.to_server.PacketClickEnchLib;
 import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.util.*;
+import io.github.kurrycat2004.enchlib.util.BigIntegerUtil;
+import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
+import io.github.kurrycat2004.enchlib.util.GuiUtil;
+import io.github.kurrycat2004.enchlib.util.LangUtil;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -21,7 +26,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +36,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -44,6 +47,7 @@ import java.util.Map;
 @NonnullByDefault
 public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButtonList.GuiResponder {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Tags.MODID, "textures/gui/enchantment_library.png");
+    private final ContainerEnchantmentLibrary container;
     private final TileEnchantmentLibrary tile;
     private final EnchList enchList;
     private GuiSearchField searchField;
@@ -54,6 +58,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
     public GuiEnchantmentLibrary(InventoryPlayer inv, TileEntity tile) {
         super(new ContainerEnchantmentLibrary(inv, tile));
         this.ySize = 188;
+        this.container = (ContainerEnchantmentLibrary) this.inventorySlots;
         this.tile = (TileEnchantmentLibrary) tile;
         this.enchList = new EnchList(this);
     }
@@ -94,17 +99,13 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         super.handleMouseInput();
     }
 
-    /// Only called client side <br>
-    /// Is received both client and server side in {@link ContainerEnchantmentLibrary#slotClick(int, int, ClickType, EntityPlayer)}
-    @Override
-    protected void handleMouseClick(@Nullable Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        //noinspection DataFlowIssue
-        super.handleMouseClick(slotIn, slotId, mouseButton, type);
-    }
+    protected void handleEnchLibClick(int enchantmentId, short level, int mouseButton, ClickType clickType) {
+        EntityPlayer player = this.mc.player;
 
-    protected void customHandleMouseClick(int enchantmentId, short level, int mouseButton, ClickType clickType) {
-        int slotId = ((ContainerEnchantmentLibrary) this.inventorySlots).levelAndEnchantmentIdToSlotId(level, enchantmentId);
-        this.handleMouseClick(null, slotId, mouseButton, clickType);
+        ItemStack clientItemStack = this.container.enchLibClick(enchantmentId, level, mouseButton, clickType, player);
+
+        short actionUid = player.openContainer.getNextTransactionID(player.inventory);
+        PacketHandler.INSTANCE.sendToServer(new PacketClickEnchLib(actionUid, enchantmentId, level, (byte) mouseButton, clickType, clientItemStack));
     }
 
     public void mouseScrolled(int mouseX, int mouseY, int delta) {
@@ -183,7 +184,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         public boolean onMouseClick(int mouseX, int mouseY, int button) {
             if (super.onMouseClick(mouseX, mouseY, button)) return true;
             if (isMouseOutsideEntries(mouseX, mouseY)) return false;
-            gui.customHandleMouseClick(entries.size(), (short) 0, button, ClickType.THROW);
+            gui.handleEnchLibClick(entries.size(), (short) 0, button, ClickType.THROW);
             return true;
         }
 
@@ -323,7 +324,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
 
             boolean shiftDown = GuiScreen.isShiftKeyDown();
             ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
-            gui.customHandleMouseClick(id, level, button, clickType);
+            gui.handleEnchLibClick(id, level, button, clickType);
 
             return true;
         }

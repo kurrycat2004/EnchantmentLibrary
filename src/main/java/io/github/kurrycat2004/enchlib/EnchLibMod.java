@@ -2,6 +2,7 @@ package io.github.kurrycat2004.enchlib;
 
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.gui.GuiHandler;
+import io.github.kurrycat2004.enchlib.net.PacketHandler;
 import io.github.kurrycat2004.enchlib.proxy.IProxy;
 import net.minecraft.init.Items;
 import net.minecraftforge.fml.common.Mod;
@@ -33,6 +34,7 @@ public class EnchLibMod {
             Items.ENCHANTED_BOOK.setMaxStackSize(ServerSettings.INSTANCE.enchantedBookStackSize);
         }
 
+        PacketHandler.init();
         proxy.preInit(event);
     }
 
