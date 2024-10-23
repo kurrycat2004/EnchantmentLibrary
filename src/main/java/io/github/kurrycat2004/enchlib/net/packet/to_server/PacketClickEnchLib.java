@@ -12,8 +12,6 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 @NonnullByDefault
@@ -58,7 +56,6 @@ public class PacketClickEnchLib implements IMessage {
 
     public static class Handler extends MessageHandler<PacketClickEnchLib, IMessage> {
         @Override
-        @SideOnly(Side.SERVER)
         public @Nullable IMessage onSMessage(PacketClickEnchLib msg, NetHandlerPlayServer serverHandler) {
             if (serverHandler.player == null) return null;
             EntityPlayerMP player = serverHandler.player;
