@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "enchlib:enchantment_library"
+  },
+  "pattern": [
+    "DPD",
+    "PEP",
+    "OPO"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "P": {
+      "item": "#plankWood"
+    },
+    "E": {
+      "item": "minecraft:enchanted_book"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  }
+}
