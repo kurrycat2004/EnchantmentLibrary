@@ -1,5 +1,6 @@
 package io.github.kurrycat2004.enchlib;
 
+import io.github.kurrycat2004.enchlib.config.ConfigManager;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.gui.GuiHandler;
 import io.github.kurrycat2004.enchlib.net.PacketHandler;
@@ -30,6 +31,8 @@ public class EnchLibMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ConfigManager.sync(event.getSide());
+
         if (ServerSettings.INSTANCE.enchantedBookStackSize != 0) {
             Items.ENCHANTED_BOOK.setMaxStackSize(ServerSettings.INSTANCE.enchantedBookStackSize);
         }

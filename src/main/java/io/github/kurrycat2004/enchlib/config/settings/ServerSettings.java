@@ -3,6 +3,7 @@ package io.github.kurrycat2004.enchlib.config.settings;
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.config.ConfigManager;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class ServerSettings {
     @Config.Ignore
@@ -27,7 +28,18 @@ public class ServerSettings {
     @Config.RangeInt(min = 0)
     public int enchantedBookStackSize = 0;
 
+    public enum EnchLevelTranslation {
+        NUMBERS,
+        ROMAN_NUMERALS,
+        VANILLA
+    }
+
+    @Config.RequiresMcRestart
+    @Config.LangKey(Tags.MODID + ".config.server_settings.ench_level_translation")
+    @Config.Comment("Overwrites the enchantment level translation to fully support roman numerals (up to 3999) or use simple numbers. Set to VANILLA to get vanilla behaviour / allow other mods to overwrite it.")
+    public EnchLevelTranslation enchLevelTranslation = EnchLevelTranslation.ROMAN_NUMERALS;
+
     static {
-        ConfigManager.register();
+        ConfigManager.register(Side.SERVER);
     }
 }

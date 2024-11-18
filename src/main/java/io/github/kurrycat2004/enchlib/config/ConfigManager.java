@@ -13,7 +13,8 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.Locale;
  * Implementation is greatly inspired by <a href="https://github.com/CleanroomMC/ConfigAnytime">ConfigAnytime</a>
  */
 @NonnullByDefault
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = Tags.MODID)
 public class ConfigManager {
     public static Configuration cfg;
     public static File configFile;
@@ -46,17 +48,17 @@ public class ConfigManager {
         }
     }
 
-    public static void register() {
+    public static void register(Side side) {
         if (cfg != null) return;
-        init();
+        init(side);
     }
 
-    public static void init() {
+    public static void init(Side side) {
         configFile = new File(getConfigDir(), Tags.MODID + ".cfg");
         cfg = new Configuration(configFile);
         cfg.load();
 
-        sync(true);
+        sync(side, true);
     }
 
     public static void save() {
@@ -90,11 +92,15 @@ public class ConfigManager {
     }
 
     public static void sync() {
-        sync(false);
+        sync(Side.CLIENT, false);
     }
 
-    private static void sync(boolean init) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+    public static void sync(Side side) {
+        sync(side, false);
+    }
+
+    private static void sync(Side side, boolean init) {
+        if (side.isClient()) {
             ConfigManager.sync(
                     ClientSettings.INSTANCE, "client_settings",
                     "These options are client-side only",

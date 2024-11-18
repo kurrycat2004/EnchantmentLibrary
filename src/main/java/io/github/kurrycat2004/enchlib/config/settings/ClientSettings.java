@@ -16,6 +16,6 @@ public class ClientSettings {
     public boolean modified_conway_wechsler = false;
 
     static {
-        ConfigManager.register();
+        ConfigManager.register(Side.CLIENT);
     }
 }

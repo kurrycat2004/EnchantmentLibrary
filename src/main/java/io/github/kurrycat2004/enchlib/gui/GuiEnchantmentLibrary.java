@@ -10,7 +10,7 @@ import io.github.kurrycat2004.enchlib.gui.components.GuiSearchField;
 import io.github.kurrycat2004.enchlib.net.PacketHandler;
 import io.github.kurrycat2004.enchlib.net.packet.to_server.PacketClickEnchLib;
 import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.util.BigIntegerUtil;
+import io.github.kurrycat2004.enchlib.util.ArrLongUtil;
 import io.github.kurrycat2004.enchlib.util.EnchantmentUtil;
 import io.github.kurrycat2004.enchlib.util.GuiUtil;
 import io.github.kurrycat2004.enchlib.util.LangUtil;
@@ -287,7 +287,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
             }
             gui.fontRenderer.drawString(getFormattedEnchantmentName(), nameX, nameY, Color.DARK_GRAY.getRGB());
 
-            String points = BigIntegerUtil.toZillionCompressed(enchData.getPointsB());
+            String points = ArrLongUtil.toZillion(enchData.data());
             GuiUtil.drawString(gui.fontRenderer, "Points: " + points,
                     nameX, nameY + 10, 0.5, Color.GRAY.getRGB(), false);
         }

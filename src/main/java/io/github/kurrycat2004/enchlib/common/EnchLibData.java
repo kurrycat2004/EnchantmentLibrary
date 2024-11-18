@@ -77,20 +77,27 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
     }
 
 
-    public void readNBT(NBTTagCompound nbt) {
+    public boolean readNBT(NBTTagCompound nbt) {
+        boolean success = true;
         data.clear();
         NBTTagCompound enchTagList = nbt.getCompoundTag(TAG_ENCHANTMENTS);
         for (String key : enchTagList.getKeySet()) {
             Enchantment enchantment = Enchantment.getEnchantmentByLocation(key);
             if (enchantment == null) {
-                EnchLibMod.LOGGER.warn("Enchantment {} not found", key);
+                EnchLibMod.LOGGER.error("Enchantment {} stored in enchantment library not found, data will be deleted", key);
+                success = false;
                 continue;
             }
             NBTTagCompound ench = enchTagList.getCompoundTag(key);
             EnchData points = new EnchData();
-            points.readNBT(ench);
+            if (!points.readNBT(ench)) {
+                EnchLibMod.LOGGER.error("Caused by: Failed to read enchantment data for {}", key);
+                success = false;
+                continue;
+            }
             data.put(enchantment, points);
         }
+        return success;
     }
 
     public @Nullable Enchantment getEnchantment(int index) {
@@ -113,16 +120,18 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         if (enchantments.isEmpty()) return stack;
         if (!ServerSettings.INSTANCE.allowEnchantSplitting && enchantments.size() > 1) return stack;
 
-        if (simulate) return ItemStack.EMPTY;
+        ItemStack result = stack.copy();
 
         for (EnchantmentData enchData : enchantments) {
             EnchData data = this.data.computeIfAbsent(enchData.enchantment, e -> new EnchData());
-            data.addN(stack.getCount(), MathUtil.clampIntToShort(enchData.enchantmentLevel));
+            int remaining = data.addN(stack.getCount(), MathUtil.clampIntToShort(enchData.enchantmentLevel), simulate);
+            // If multiple enchantments are inserted, and one of them is full, while the other isn't, simply eat the full one
+            result.setCount(Math.min(result.getCount(), remaining));
         }
 
         this.markForSave();
 
-        return ItemStack.EMPTY;
+        return result.getCount() == 0 ? ItemStack.EMPTY : result;
     }
 
     @Override
@@ -208,8 +217,9 @@ public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepo
         EnchData enchData = entry.getValue();
         EnchData copy = enchData.copy();
 
-        copy.addN(stack.getCount(), existingLevel);
-        int remaining = copy.removeN(stack.getCount(), level, false);
+        int remaining = copy.addN(stack.getCount(), existingLevel, false);
+        if (existingLevel != 0 && remaining != 0) return stack;
+        remaining = copy.removeN(stack.getCount(), level, false);
         if (remaining != 0) return stack;
 
         enchData.copyFrom(copy);

@@ -1,5 +1,6 @@
 package io.github.kurrycat2004.enchlib.core;
 
+import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.jetbrains.annotations.Nullable;
 import zone.rong.mixinbooter.IEarlyMixinLoader;
@@ -17,6 +18,7 @@ public class EnchLibEarly implements IFMLLoadingPlugin, IEarlyMixinLoader {
     private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new HashMap<>() {
         {
             put("mixins.enchlib.early.json", TRUE_SUPPLIER);
+            put("mixins.enchlib.early.enchlevel.json", () -> ServerSettings.INSTANCE.enchLevelTranslation != ServerSettings.EnchLevelTranslation.VANILLA);
         }
     };
 

@@ -1,6 +1,7 @@
 package io.github.kurrycat2004.enchlib.tile;
 
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
+import io.github.kurrycat2004.enchlib.EnchLibMod;
 import io.github.kurrycat2004.enchlib.block.INameable;
 import io.github.kurrycat2004.enchlib.common.EnchLibData;
 import io.github.kurrycat2004.enchlib.gui.GuiEnchantmentLibrary;
@@ -56,8 +57,12 @@ public class TileEnchantmentLibrary extends TileEntity implements INBTSerDe, INa
     }
 
     @Override
-    public void readNBT(NBTTagCompound nbt) {
-        data.readNBT(nbt);
+    public boolean readNBT(NBTTagCompound nbt) {
+        if (!data.readNBT(nbt)) {
+            EnchLibMod.LOGGER.warn("Caused by: Error while trying to read NBT data for Enchantment Library at {}", this.pos);
+            return false;
+        }
+        return true;
     }
 
     @Override

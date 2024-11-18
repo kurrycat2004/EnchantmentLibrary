@@ -1,9 +1,30 @@
 package io.github.kurrycat2004.enchlib.util;
 
+import org.jetbrains.annotations.Range;
+
 public class MathUtil {
+    public static double uLongToDouble(long value) {
+        double result = value & Long.MAX_VALUE;
+        if ((value & ~Long.MAX_VALUE) != 0) {
+            result += 0x4000000000000000L;
+            result += 0x4000000000000000L;
+        }
+        return result;
+    }
+
     public static int clampLongToInt(long value) {
         if (value > Integer.MAX_VALUE) return Integer.MAX_VALUE;
         if (value < Integer.MIN_VALUE) return Integer.MIN_VALUE;
+        return (int) value;
+    }
+
+    /**
+     * @param value The value to clamp
+     * @return A signed int which is equal to the value clamped to the range of an unsigned int
+     */
+    @Range(from = 0, to = Integer.MAX_VALUE)
+    public static int clampULongToInt(long value) {
+        if (Long.numberOfLeadingZeros(value) < Integer.SIZE + 1) return Integer.MAX_VALUE;
         return (int) value;
     }
 
