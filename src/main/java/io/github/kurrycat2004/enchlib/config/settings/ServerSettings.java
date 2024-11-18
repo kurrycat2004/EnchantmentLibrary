@@ -19,7 +19,7 @@ public class ServerSettings {
 
     @Config.RequiresMcRestart
     @Config.LangKey(Tags.MODID + ".config.server_settings.enable_ae2uel_hash_fix_mixin")
-    @Config.Comment("Attempts to fix AE2UELs hash collisions in the ItemStack cache, by replacing the NBT hashCode functions")
+    @Config.Comment("Attempts to fix the ItemStack cache hash collision issues introduced in AE2UEL v0.56.6 by changing the vanilla NBT hashCode functions using a mixin.")
     public boolean enableAE2UELHashFixMixin = true;
 
     @Config.RequiresMcRestart

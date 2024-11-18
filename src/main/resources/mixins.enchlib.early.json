@@ -3,7 +3,7 @@
   "refmap": "enchlib.refmap.json",
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
+  "client": [
     "ItemEnchantedBookMixin"
   ]
 }
