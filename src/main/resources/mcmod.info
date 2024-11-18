@@ -4,8 +4,8 @@
     "description": "For all your enchantment storage needs",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "logoFile": "",
-    "url": "",
+    "logoFile": "assets/enchlib/enchlib_logo_x256.png",
+    "url": "https://github.com/kurrycat2004/EnchantmentLibrary",
     "authorList": ["kurrycat"],
     "credits": "",
     "dependencies": []
