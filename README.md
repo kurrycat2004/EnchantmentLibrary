@@ -1,6 +1,8 @@
 # Enchantment Library
 
 ### **1.12.2 only**
+### Dependencies: 
+- [MixinBooter](https://www.curseforge.com/minecraft/mc-mods/mixin-booter)
 
 -----
 
