@@ -38,6 +38,6 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    runtimeOnlyNonPublishable rfg.deobf("curse.maven:ae2-extended-life-570458:5411078-sources-5411080")
+    implementation rfg.deobf("curse.maven:ae2-extended-life-570458:5411078-sources-5411080")
     runtimeOnlyNonPublishable rfg.deobf("curse.maven:enchcontrol-315721:2791638")
 }
