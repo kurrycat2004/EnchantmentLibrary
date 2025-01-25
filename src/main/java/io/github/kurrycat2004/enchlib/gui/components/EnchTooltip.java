@@ -9,16 +9,27 @@ import org.jetbrains.annotations.Nullable;
 @NonnullByDefault
 public class EnchTooltip {
     private static Enchantment enchantToAdd = null;
+    private static boolean hasEnchant = false;
     private static short levelToAdd = 0;
 
     public static void preTooltip(Enchantment enchant, short level) {
         enchantToAdd = enchant;
+        hasEnchant = false;
         levelToAdd = level;
     }
 
     public static void postTooltip() {
         enchantToAdd = null;
+        hasEnchant = false;
         levelToAdd = 0;
+    }
+
+    public static void setHasEnchant(boolean hasEnchant) {
+        EnchTooltip.hasEnchant = hasEnchant;
+    }
+
+    public static boolean hasEnchant() {
+        return hasEnchant;
     }
 
     public static @Nullable Enchantment getEnchantToAdd() {

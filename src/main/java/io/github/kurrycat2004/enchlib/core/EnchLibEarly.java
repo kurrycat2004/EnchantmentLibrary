@@ -17,7 +17,7 @@ public class EnchLibEarly implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new HashMap<>() {
         {
-            put("mixins.enchlib.early.json", TRUE_SUPPLIER);
+            put("mixins.enchlib.early.tooltip.json", TRUE_SUPPLIER);
             put("mixins.enchlib.early.enchlevel.json", () -> ServerSettings.INSTANCE.enchLevelTranslation != ServerSettings.EnchLevelTranslation.VANILLA);
         }
     };

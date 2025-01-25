@@ -1,9 +1,7 @@
 {
-  "package": "io.github.kurrycat2004.enchlib.mixin.early",
-  "refmap": "enchlib.refmap.json",
-  "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "EnchantmentMixin_EnchLevel"
-  ]
+    "package": "io.github.kurrycat2004.enchlib.mixin.early",
+    "refmap": "enchlib.refmap.json",
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": ["EnchantmentMixin", "EnchantmentMixin_EnchLevel"]
 }

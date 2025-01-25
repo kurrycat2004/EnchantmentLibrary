@@ -1,7 +1,6 @@
 package io.github.kurrycat2004.enchlib.core;
 
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
-import net.minecraftforge.fml.common.Loader;
 import zone.rong.mixinbooter.ILateMixinLoader;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public class EnchLibLate implements ILateMixinLoader {
 
     private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new HashMap<>() {
         {
-            put("mixins.enchlib.ae2uel.json", () -> ServerSettings.INSTANCE.enableAE2UELHashFixMixin && Loader.isModLoaded("appliedenergistics2"));
+            put("mixins.enchlib.ae2uel.json", () -> ServerSettings.INSTANCE.enableAE2UELHashFixMixin && Mods.AE2.isLoaded());
         }
     };
 

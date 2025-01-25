@@ -18,7 +18,7 @@ public class EnchantmentMixin_EnchLevel {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/text/translation/I18n;translateToLocal(Ljava/lang/String;)Ljava/lang/String;"),
             slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I"))
     )
-    public String getTranslatedName(String key, Operation<String> original, int level) {
+    public String enchlib$getTranslatedName(String key, Operation<String> original, int level) {
         return switch (ServerSettings.INSTANCE.enchLevelTranslation) {
             case NUMBERS -> String.valueOf(level);
             case ROMAN_NUMERALS -> level < 1 || level > 3999 ? String.valueOf(level) : RomanNumeralUtil.fromInt(level);
