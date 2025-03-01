@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +26,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 @NonnullByDefault
-public class EnchLibData implements INBTSerDe, ISavable, IItemHandler, IItemRepository {
+public class EnchLibData implements INBTSerDe, ISavable, ISlotlessItemHandler, IItemRepository {
     public static final String TAG_ENCHANTMENTS = "enchlib";
 
     private static final Comparator<Enchantment> enchantmentComparator = (e1, e2) -> {

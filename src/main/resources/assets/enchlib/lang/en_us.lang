@@ -23,6 +23,8 @@ enchlib.config.server_settings.enchanted_book_stack_size=Enchanted Book Stack Si
 enchlib.config.server_settings.enchanted_book_stack_size.tooltip=The maximum stack size for enchanted books. Set to 0 to not overwrite it at all.\nValues over 64 will not really work.
 enchlib.config.server_settings.ench_level_translation=Enchantment Level Translation
 enchlib.config.server_settings.ench_level_translation.tooltip=Overwrites the enchantment level translation to fully support roman numerals (up to 3999) or use simple numbers. Set to VANILLA to get vanilla behaviour / allow other mods to overwrite it.
+enchlib.config.server_settings.optimize_item_handler=Optimize Item Handler
+enchlib.config.server_settings.optimize_item_handler.tooltip=Optimizes common item handler operations for the enchlib. This should have no impact on performance for non-enchlib item handlers, but a pretty big impact for enchlib. The mixins themselves should be compatible with everything.
 
 # Blocks
 tile.enchlib.enchantment_library.name=Enchantment Library

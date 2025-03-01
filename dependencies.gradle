@@ -38,6 +38,32 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    implementation rfg.deobf("curse.maven:ae2-extended-life-570458:5411078-sources-5411080")
-    runtimeOnlyNonPublishable rfg.deobf("curse.maven:enchcontrol-315721:2791638")
+    compileOnly rfg.deobf("curse.maven:ae2-extended-life-570458:5411078-sources-5411080")
+
+    boolean enableCASM = System.getenv("DEBUG_CENSOREDASM") != null
+    boolean enableSpark = System.getenv("DEBUG_SPARK") != null || enableCASM
+    boolean enableAE2UEL = System.getenv("DEBUG_AE2UEL") != null
+    boolean enableEnchControl = System.getenv("DEBUG_ENCHCONTROL") != null
+    boolean enableThermalDynamics = System.getenv("DEBUG_THERMAL_DYNAMICS") != null
+
+    if (enableSpark) {
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:spark-361579:3245793")
+    }
+    if (enableCASM) {
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:lolasm-460609:6211820")
+    }
+    if (enableAE2UEL) {
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:ae2-extended-life-570458:5411078")
+    }
+    if (enableEnchControl) {
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:enchcontrol-315721:2791638")
+    }
+    if (enableThermalDynamics) {
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:codechickenlib-242818:2779848")
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:redstone-flux-270789:2920436")
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:cofh-core-69162:2920433")
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:cofh-world-271384:2920434")
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:thermal-foundation-222880:2926428")
+        runtimeOnlyNonPublishable rfg.deobf("curse.maven:thermal-dynamics-227443:2920505")
+    }
 }
