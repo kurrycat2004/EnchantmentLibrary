@@ -16,9 +16,11 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -80,6 +82,21 @@ public class TileEnchantmentLibrary extends TileEntity implements INBTSerDe, INa
         if (this.world != null && this.world.isRemote) {
             this.updateGui();
         }
+    }
+
+    /**
+     * Ensure the tile entity is NOT refreshed (re-created) on mere blockstate/property changes
+     * like rotations; only refresh if the actual block instance changes.
+     * 
+     * @param world The world.
+     * @param pos The block position.
+     * @param oldState The old block state.
+     * @param newState The new block state.
+     * @return True to refresh (remove/recreate), false to keep existing tile.
+     */
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
     }
 
     @SideOnly(Side.CLIENT)
