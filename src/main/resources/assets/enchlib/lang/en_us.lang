@@ -25,9 +25,18 @@ enchlib.config.server_settings.ench_level_translation=Enchantment Level Translat
 enchlib.config.server_settings.ench_level_translation.tooltip=Overwrites the enchantment level translation to fully support roman numerals (up to 3999) or use simple numbers. Set to VANILLA to get vanilla behaviour / allow other mods to overwrite it.
 enchlib.config.server_settings.optimize_item_handler=Optimize Item Handler
 enchlib.config.server_settings.optimize_item_handler.tooltip=Optimizes common item handler operations for the enchlib. This should have no impact on performance for non-enchlib item handlers, but a pretty big impact for enchlib. The mixins themselves should be compatible with everything.
+enchlib.config.server_settings.auto_pickup=Allow Auto pick-up
+enchlib.config.server_settings.auto_pickup.tooltip=Automatically insert enchanted books picked up by the player into the Enchantment Library, when possible. Only applies if the player carries an enchantment library item that can store the books.
 
 # Blocks
 tile.enchlib.enchantment_library.name=Enchantment Library
 
 # Gui info
 info.enchlib.gui.enchantment_count=%s Enchantments
+
+# Tooltip
+tooltip.enchlib.autopickup=Auto pick-up: 
+tooltip.enchlib.enabled=Enabled
+tooltip.enchlib.enabled.suffix=
+tooltip.enchlib.disabled=Disabled
+tooltip.enchlib.disabled.suffix= (see config)

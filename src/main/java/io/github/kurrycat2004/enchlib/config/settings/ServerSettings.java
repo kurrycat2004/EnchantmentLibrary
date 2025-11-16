@@ -44,6 +44,10 @@ public class ServerSettings {
     @Config.Comment("Optimizes common item handler operations for the enchlib. This should have no impact on performance for non-enchlib item handlers, but a pretty big impact for enchlib. The mixins themselves should be compatible with everything.")
     public boolean optimizeItemHandler = true;
 
+    @Config.LangKey(Tags.MODID + ".config.server_settings.auto_pickup")
+    @Config.Comment("Automatically insert enchanted books picked up by players into the Enchantment Library when possible. Only applies if the player carries a library item/block that can store the book.")
+    public boolean autoPickupEnchantedBooks = true;
+
     static {
         ConfigManager.register(Side.SERVER);
     }
