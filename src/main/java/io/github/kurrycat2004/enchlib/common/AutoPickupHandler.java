@@ -1,6 +1,5 @@
 package io.github.kurrycat2004.enchlib.common;
 
-import io.github.kurrycat2004.enchlib.EnchLibMod;
 import io.github.kurrycat2004.enchlib.EnchLibObjects;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.tile.TileEnchantmentLibrary;
@@ -131,7 +130,6 @@ public final class AutoPickupHandler {
 
         NBTTagCompound root = libraryStack.getTagCompound();
         NBTTagCompound beTag;
-        EnchLibMod.LOGGER.info("NBT Data: " + root);
         if (root != null && root.hasKey("data")) {
             beTag = root.getCompoundTag("data");
         } else {
