@@ -2,6 +2,7 @@ package io.github.kurrycat2004.enchlib.gui;
 
 import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.common.EnchData;
+import io.github.kurrycat2004.enchlib.config.settings.ClientSettings;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
 import io.github.kurrycat2004.enchlib.gui.components.GuiList;
@@ -31,7 +32,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -42,11 +42,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static net.minecraft.util.text.TextFormatting.DARK_GRAY;
+import static net.minecraft.util.text.TextFormatting.GRAY;
+import static net.minecraft.util.text.TextFormatting.GREEN;
+import static net.minecraft.util.text.TextFormatting.ITALIC;
+import static net.minecraft.util.text.TextFormatting.RED;
+
 @SideOnly(Side.CLIENT)
 @NonnullByDefault
 public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButtonList.GuiResponder {
     private static final int SEARCH_COLOR = 0xFFFFFFFF;
     private static final int SEARCH_COLOR_ERROR = 0xFFFF0000;
+
+    private static final String INFO_SCROLL_TIP_KEY = "scroll_tip";
+    private static final String INFO_MERGE_TIP_KEY = "merge_tip";
+    private static final String INFO_ENCHANTMENT_DIFF_KEY = "enchantment_diff";
+    private static final String INFO_NO_ENTRIES = "no_entries";
+    private static final String INFO_NO_FILTER_MATCHES = "no_filter_matches";
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(Tags.MODID, "textures/gui/enchantment_library.png");
 
@@ -181,9 +193,12 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         if (stack.isEmpty()) return tooltip;
 
         addToHoldingEnchantment.addDiffToTooltip(stack, tooltip);
-        tooltip.add(1, "" + TextFormatting.DARK_GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("scroll_tip"));
-        if (ServerSettings.INSTANCE.allowEnchantMerging && stack == addToHoldingEnchantment.book) {
-            tooltip.add(1, "" + TextFormatting.DARK_GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("merge_tip"));
+
+        if (ClientSettings.INSTANCE.show_tips) {
+            tooltip.add(1, "" + DARK_GRAY + ITALIC + LangUtil.guiInfo(INFO_SCROLL_TIP_KEY));
+            if (ServerSettings.INSTANCE.allowEnchantMerging && stack == addToHoldingEnchantment.book) {
+                tooltip.add(1, "" + DARK_GRAY + ITALIC + LangUtil.guiInfo(INFO_MERGE_TIP_KEY));
+            }
         }
         return tooltip;
     }
@@ -205,6 +220,20 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
             if (isMouseOutsideEntries(mouseX, mouseY)) return false;
             handleEnchLibClick(entries.size(), (short) 0, button, ClickType.THROW);
             return true;
+        }
+
+        @Override
+        protected void renderEntries(int mouseX, int mouseY) {
+            super.renderEntries(mouseX, mouseY);
+            String info = null;
+            if (entries.isEmpty()) info = LangUtil.guiInfo(INFO_NO_ENTRIES);
+            else if (filteredEntries.isEmpty()) info = LangUtil.guiInfo(INFO_NO_FILTER_MATCHES);
+
+            if (info != null) {
+                int x = this.x + getEntryWidth() / 2;
+                int y = this.y + height / 2;
+                GuiUtil.drawCenteredStringLines(fontRenderer, info, x, y, 1.0, Color.WHITE.getRGB(), true);
+            }
         }
 
         @Override
@@ -270,7 +299,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
 
         private String getFormattedEnchantmentName() {
             String s = getEnchantmentName();
-            if (enchantment.isCurse()) s = TextFormatting.RED + s;
+            if (enchantment.isCurse()) s = RED + s;
             return s;
         }
 
@@ -329,11 +358,11 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
                 int oldLevel = enchTag.getShort(EnchantmentUtil.VANILLA_TAG_LEVEL);
                 if (oldLevel >= level) return;
 
-                tooltip.add(1, TextFormatting.RED + "- " + enchantment.getTranslatedName(oldLevel));
+                tooltip.add(1, RED + "- " + enchantment.getTranslatedName(oldLevel));
             }
 
-            tooltip.add(1, TextFormatting.GREEN + "+ " + enchantment.getTranslatedName(level));
-            tooltip.add(1, "" + TextFormatting.GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("enchantment_diff"));
+            tooltip.add(1, GREEN + "+ " + enchantment.getTranslatedName(level));
+            tooltip.add(1, "" + GRAY + ITALIC + LangUtil.guiInfo(INFO_ENCHANTMENT_DIFF_KEY));
         }
 
         @Override

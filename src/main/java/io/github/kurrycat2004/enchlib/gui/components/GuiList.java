@@ -48,7 +48,7 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
     }
 
     private boolean showScrollbar() {
-        return getTotalHeight() > height;
+        return getTotalShownEntriesHeight() > height;
     }
 
     public void updateSize(int x, int y, int width, int height) {
@@ -68,7 +68,7 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
     }
 
     public void setScroll(int amount) {
-        this.amountScrolled = MathUtil.clamp(amount, 0, getTotalHeight() - height);
+        this.amountScrolled = MathUtil.clamp(amount, 0, getTotalShownEntriesHeight() - height);
     }
 
     public void updateFilter() {
@@ -116,19 +116,19 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
 
     private int getScrollbarY(int scrollbarHeight) {
         return y + 1 + MathUtil.mapClamp(amountScrolled,
-                0, getTotalHeight() - height,
+                0, getTotalShownEntriesHeight() - height,
                 0, height - 2 - scrollbarHeight);
     }
 
     private int getScrollbarHeight() {
-        return Math.max(MathUtil.ceilDiv(height * (height - 2), getTotalHeight()), SCROLLBAR_MIN_HEIGHT);
+        return Math.max(MathUtil.ceilDiv(height * (height - 2), getTotalShownEntriesHeight()), SCROLLBAR_MIN_HEIGHT);
     }
 
-    private int getEntryWidth() {
+    protected final int getEntryWidth() {
         return showScrollbar() ? width - SCROLLBAR_WIDTH : width;
     }
 
-    private int getTotalHeight() {
+    private int getTotalShownEntriesHeight() {
         return filteredEntries.size() * slotHeight;
     }
 
@@ -147,12 +147,10 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
         return index;
     }
 
-    public void render(int mouseX, int mouseY) {
+    protected void renderEntries(int mouseX, int mouseY) {
+        int entryWidth = getEntryWidth();
         int start = getStartIndex();
         int end = Math.min(start + maxRenderCount, filteredEntries.size() - 1); // Inclusive
-
-        int entryWidth = getEntryWidth();
-        enableScissor(x, y, entryWidth, height);
 
         for (int i = start; i >= 0 && i <= end; i++) {
             Pair<T, Integer> entry = filteredEntries.get(i);
@@ -164,7 +162,11 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
             entry.first().drawEntry(i, x, entryY, entryWidth, slotHeight,
                     mouseX - x, mouseY - entryY, entry.second(), filter.length());
         }
+    }
 
+    public void render(int mouseX, int mouseY) {
+        enableScissor(x, y, getEntryWidth(), height);
+        renderEntries(mouseX, mouseY);
         disableScissor();
 
         if (showScrollbar()) {
@@ -174,7 +176,7 @@ public abstract class GuiList<T extends GuiList.IListEntry> implements IMouseHan
             if (scrollDragOffset >= 0) {
                 int newScroll = MathUtil.map(mouseY - scrollDragOffset,
                         y + 1, y + height - 1 - scrollbarHeight,
-                        0, getTotalHeight() - height);
+                        0, getTotalShownEntriesHeight() - height);
                 this.setScroll(scrollDragAmount + newScroll);
             }
 

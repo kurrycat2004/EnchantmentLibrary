@@ -3,7 +3,12 @@ package io.github.kurrycat2004.enchlib.util;
 import io.github.kurrycat2004.enchlib.util.annotations.NonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +44,23 @@ public class GuiUtil {
                 GlStateManager.SourceFactor.ONE,
                 GlStateManager.DestFactor.ZERO
         );
+    }
+
+    public static void drawCenteredStringLines(FontRenderer fr, String text, double x, double y, double scale, int color, boolean shadow) {
+        String[] lines = text.split("\\\\n");
+        int lineHeight = fr.FONT_HEIGHT + 1;
+        int halfTotalHeight = (lines.length * lineHeight) / 2;
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            int halfLineWidth = fr.getStringWidth(line) / 2;
+            drawString(
+                    fr, line,
+                    x - halfLineWidth * scale,
+                    y - halfTotalHeight * scale + i * lineHeight * scale,
+                    scale, color, shadow
+            );
+        }
     }
 
     public static void drawRightString(FontRenderer fr, String text, double x, double y, double scale, int color, boolean shadow) {

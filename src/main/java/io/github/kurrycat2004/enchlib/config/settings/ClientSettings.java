@@ -26,6 +26,10 @@ public class ClientSettings {
     @Config.Comment("Overwrites the enchantment level translation to fully support roman numerals (up to 3999) or use simple numbers. Can be NUMBERS, ROMAN_NUMERALS or VANILLA. Set to VANILLA to get vanilla behaviour / allow other mods to overwrite it.")
     public EnchLevelTranslation enchLevelTranslation = EnchLevelTranslation.ROMAN_NUMERALS;
 
+    @Config.LangKey(Tags.MODID + ".config.client_settings.show_tips")
+    @Config.Comment("Shows tips on how to use the enchantment library in various tooltips in the GUI")
+    public boolean show_tips = true;
+
     @Config.LangKey(Tags.MODID + ".config.client_settings.modified_conway_wechsler")
     @Config.Comment("Use the modified Conway-Wechsler system for showing enchantment Points")
     public boolean modified_conway_wechsler = false;
