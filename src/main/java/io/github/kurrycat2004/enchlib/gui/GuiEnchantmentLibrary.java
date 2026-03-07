@@ -4,7 +4,6 @@ import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.common.EnchData;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import io.github.kurrycat2004.enchlib.container.ContainerEnchantmentLibrary;
-import io.github.kurrycat2004.enchlib.gui.components.EnchTooltip;
 import io.github.kurrycat2004.enchlib.gui.components.GuiList;
 import io.github.kurrycat2004.enchlib.gui.components.GuiSearchField;
 import io.github.kurrycat2004.enchlib.net.PacketHandler;
@@ -33,7 +32,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -41,26 +39,31 @@ import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 @NonnullByDefault
 public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButtonList.GuiResponder {
+    private static final int SEARCH_COLOR = 0xFFFFFFFF;
+    private static final int SEARCH_COLOR_ERROR = 0xFFFF0000;
+
     private static final ResourceLocation TEXTURE = new ResourceLocation(Tags.MODID, "textures/gui/enchantment_library.png");
+
     private final ContainerEnchantmentLibrary container;
     private final TileEnchantmentLibrary tile;
     private final EnchList enchList;
     private GuiSearchField searchField;
 
-    private static final int SEARCH_COLOR = 0xFFFFFFFF;
-    private static final int SEARCH_COLOR_ERROR = 0xFFFF0000;
+    // for tooltips
+    private EnchListEntry addToHoldingEnchantment = null;
 
     public GuiEnchantmentLibrary(InventoryPlayer inv, TileEntity tile) {
         super(new ContainerEnchantmentLibrary(inv, tile));
         this.ySize = 188;
         this.container = (ContainerEnchantmentLibrary) this.inventorySlots;
         this.tile = (TileEnchantmentLibrary) tile;
-        this.enchList = new EnchList(this);
+        this.enchList = new EnchList();
     }
 
     public TileEnchantmentLibrary getTile() {
@@ -171,12 +174,28 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         this.searchField.drawTextBox();
     }
 
-    public static class EnchList extends GuiList<EnchListEntry> {
-        private final GuiEnchantmentLibrary gui;
+    @Override
+    public List<String> getItemToolTip(ItemStack stack) {
+        List<String> tooltip = super.getItemToolTip(stack);
+        if (addToHoldingEnchantment == null) return tooltip;
+        if (stack.isEmpty()) return tooltip;
 
-        public EnchList(GuiEnchantmentLibrary gui) {
-            super((gui.width - gui.xSize) / 2 + 7, (gui.height - gui.ySize) / 2 + 17, 162, 72, 24);
-            this.gui = gui;
+        addToHoldingEnchantment.addDiffToTooltip(stack, tooltip);
+        tooltip.add(1, "" + TextFormatting.DARK_GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("scroll_tip"));
+        if (ServerSettings.INSTANCE.allowEnchantMerging && stack == addToHoldingEnchantment.book) {
+            tooltip.add(1, "" + TextFormatting.DARK_GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("merge_tip"));
+        }
+        return tooltip;
+    }
+
+    public class EnchList extends GuiList<EnchListEntry> {
+        public EnchList() {
+            super(
+                    (GuiEnchantmentLibrary.this.width - GuiEnchantmentLibrary.this.xSize) / 2 + 7,
+                    (GuiEnchantmentLibrary.this.height - GuiEnchantmentLibrary.this.ySize) / 2 + 17,
+                    162, 72,
+                    24
+            );
             updateEntries();
         }
 
@@ -184,17 +203,17 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         public boolean onMouseClick(int mouseX, int mouseY, int button) {
             if (super.onMouseClick(mouseX, mouseY, button)) return true;
             if (isMouseOutsideEntries(mouseX, mouseY)) return false;
-            gui.handleEnchLibClick(entries.size(), (short) 0, button, ClickType.THROW);
+            handleEnchLibClick(entries.size(), (short) 0, button, ClickType.THROW);
             return true;
         }
 
         @Override
         public void updateEntries() {
-            Reference2ObjectLinkedOpenHashMap<Enchantment, EnchListEntry> entryMap = new Reference2ObjectLinkedOpenHashMap<>(gui.tile.data.getEnchantmentCount());
+            Map<Enchantment, EnchListEntry> entryMap = new Reference2ObjectLinkedOpenHashMap<>(tile.data.getEnchantmentCount());
 
             int id = 0;
-            for (Map.Entry<Enchantment, EnchData> entry : gui.tile.data.getMap().entrySet()) {
-                EnchListEntry enchEntry = new EnchListEntry(id++, entry.getKey(), entry.getValue(), gui);
+            for (Map.Entry<Enchantment, EnchData> entry : tile.data.getMap().entrySet()) {
+                EnchListEntry enchEntry = new EnchListEntry(id++, entry.getKey(), entry.getValue());
                 entryMap.put(entry.getKey(), enchEntry);
             }
             // update new entries using the old ones
@@ -211,29 +230,26 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         }
     }
 
-    public static class EnchListEntry implements GuiList.IListEntry {
+    public class EnchListEntry implements GuiList.IListEntry {
         private static final int ITEM_MARGIN = 4;
 
         /// index of enchantment data in tile.data
         private final int id;
         private final Enchantment enchantment;
         private final EnchData enchData;
-        private final GuiEnchantmentLibrary gui;
 
         private final ItemStack book;
         private final NBTTagCompound enchNBT;
         private short level = 1;
 
-        public EnchListEntry(int enchantmentId, Enchantment enchantment, EnchData enchData, GuiEnchantmentLibrary gui) {
+        public EnchListEntry(int enchantmentId, Enchantment enchantment, EnchData enchData) {
             this.id = enchantmentId;
-            this.gui = gui;
             this.enchantment = enchantment;
             this.enchData = enchData;
             book = EnchantmentUtil.getBook(enchantment, level, 1);
-            NBTTagCompound nbt = book.getTagCompound();
-            assert nbt != null;
-            NBTTagList enchantments = nbt.getTagList(EnchantmentUtil.VANILLA_TAG_ENCHANTMENTS, Constants.NBT.TAG_COMPOUND);
-            enchNBT = enchantments.getCompoundTagAt(0);
+            NBTTagList enchantmentTags = EnchantmentUtil.getEnchantmentTags(book);
+            assert enchantmentTags != null;
+            enchNBT = enchantmentTags.getCompoundTagAt(0);
         }
 
         private void setLevel(short level) {
@@ -267,7 +283,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
         public void drawEntry(int slotIndex, int x, int y, int w, int h, int mouseX, int mouseY, int filterStart, int filterLen) {
             GuiUtil.resetGlColor();
             Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-            GuiUtil.drawXStretchedTexturedModalRect(x, y, 0, 188, 21, 2, w, h, GuiUtil.X256, gui.zLevel);
+            GuiUtil.drawXStretchedTexturedModalRect(x, y, 0, 188, 21, 2, w, h, GuiUtil.X256, zLevel);
 
             boolean hovered = isMouseOverItem(mouseX, mouseY);
             GuiUtil.drawSingleItemStack(book, x + ITEM_MARGIN, y + ITEM_MARGIN, hovered, null, String.valueOf(level));
@@ -277,33 +293,47 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
             int nameX = x + ITEM_MARGIN * 2 + GuiUtil.ITEM_SIZE + 2;
             int nameY = y + 5;
             if (filterStart >= 0) {
-                int matchX = gui.fontRenderer.getStringWidth(getEnchantmentName().substring(0, filterStart));
-                int matchWidth = gui.fontRenderer.getStringWidth(getEnchantmentName().substring(filterStart, filterStart + filterLen));
+                int matchX = fontRenderer.getStringWidth(getEnchantmentName().substring(0, filterStart));
+                int matchWidth = fontRenderer.getStringWidth(getEnchantmentName().substring(filterStart, filterStart + filterLen));
                 GuiUtil.drawRect(
                         nameX + matchX, nameY - 1,
-                        matchWidth, gui.fontRenderer.FONT_HEIGHT + 1,
-                        0xFFFFF59D, gui.zLevel
+                        matchWidth, fontRenderer.FONT_HEIGHT + 1,
+                        0xFFFFF59D, zLevel
                 );
             }
-            gui.fontRenderer.drawString(getFormattedEnchantmentName(), nameX, nameY, Color.DARK_GRAY.getRGB());
+            fontRenderer.drawString(getFormattedEnchantmentName(), nameX, nameY, Color.DARK_GRAY.getRGB());
 
             String points = ArrLongUtil.toZillion(enchData.data());
-            GuiUtil.drawString(gui.fontRenderer, "Points: " + points,
+            GuiUtil.drawString(fontRenderer, "Points: " + points,
                     nameX, nameY + 10, 0.5, Color.GRAY.getRGB(), false);
         }
 
         @Override
         public void drawHovered(int slotIndex, int x, int y, int w, int h, int mouseX, int mouseY, int filterStart, int filterLen) {
             if (!isMouseOverItem(mouseX, mouseY)) return;
-            ItemStack holding = gui.mc.player.inventory.getItemStack();
-            if (!(holding.getItem() instanceof ItemEnchantedBook) || !ServerSettings.INSTANCE.allowEnchantMerging) {
-                gui.renderToolTip(book, x + mouseX, y + mouseY);
-                return;
+            ItemStack holding = mc.player.inventory.getItemStack();
+            if (!holding.isEmpty() & !(holding.getItem() instanceof ItemEnchantedBook)) return;
+
+            ItemStack tooltipStack = !holding.isEmpty() && ServerSettings.INSTANCE.allowEnchantMerging ? holding : book;
+
+            addToHoldingEnchantment = this;
+            renderToolTip(tooltipStack, x + mouseX, y + mouseY);
+            addToHoldingEnchantment = null;
+        }
+
+        public void addDiffToTooltip(ItemStack stack, List<String> tooltip) {
+            if (stack == book) return;
+
+            NBTTagCompound enchTag = EnchantmentUtil.findEnchTagInStack(enchantment, stack);
+            if (enchTag != null) {
+                int oldLevel = enchTag.getShort(EnchantmentUtil.VANILLA_TAG_LEVEL);
+                if (oldLevel >= level) return;
+
+                tooltip.add(1, TextFormatting.RED + "- " + enchantment.getTranslatedName(oldLevel));
             }
 
-            EnchTooltip.preTooltip(enchantment, level);
-            gui.renderToolTip(holding, x + mouseX, y + mouseY);
-            EnchTooltip.postTooltip();
+            tooltip.add(1, TextFormatting.GREEN + "+ " + enchantment.getTranslatedName(level));
+            tooltip.add(1, "" + TextFormatting.GRAY + TextFormatting.ITALIC + LangUtil.guiInfo("enchantment_diff"));
         }
 
         @Override
@@ -324,7 +354,7 @@ public class GuiEnchantmentLibrary extends GuiContainer implements GuiPageButton
 
             boolean shiftDown = GuiScreen.isShiftKeyDown();
             ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
-            gui.handleEnchLibClick(id, level, button, clickType);
+            handleEnchLibClick(id, level, button, clickType);
 
             return true;
         }

@@ -49,15 +49,11 @@ public class ConfigManager {
     }
 
     public static void register(Side side) {
-        if (cfg != null) return;
-        init(side);
-    }
-
-    public static void init(Side side) {
-        configFile = new File(getConfigDir(), Tags.MODID + ".cfg");
-        cfg = new Configuration(configFile);
-        cfg.load();
-
+        if (cfg == null) {
+            configFile = new File(getConfigDir(), Tags.MODID + ".cfg");
+            cfg = new Configuration(configFile);
+            cfg.load();
+        }
         sync(side, true);
     }
 

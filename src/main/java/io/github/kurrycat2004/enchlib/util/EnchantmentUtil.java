@@ -9,6 +9,7 @@ import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class EnchantmentUtil {
     public static final String VANILLA_TAG_ENCHANTMENTS = "StoredEnchantments";
     public static final String VANILLA_TAG_ID = "id";
     public static final String VANILLA_TAG_LEVEL = "lvl";
+
+    private EnchantmentUtil() {}
 
     public static ItemStack getBookProto(Enchantment enchantment, short level) {
         return getBook(enchantment, level, 1);
@@ -35,19 +38,26 @@ public class EnchantmentUtil {
         EnchLibMod.LOGGER.warn("Enchantment with id {} not found", id);
     }
 
-    public static List<EnchantmentData> getEnchantments(ItemStack stack) {
-        NBTTagList nbttaglist = ItemEnchantedBook.getEnchantments(stack);
-        List<EnchantmentData> enchantments = new ArrayList<>();
+    public static @Nullable NBTTagList getEnchantmentTags(ItemStack stack) {
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) return null;
+        return tag.getTagList(VANILLA_TAG_ENCHANTMENTS, Constants.NBT.TAG_COMPOUND);
+    }
 
-        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-            int id = nbttagcompound.getShort(VANILLA_TAG_ID);
+    public static List<EnchantmentData> getEnchantments(ItemStack stack) {
+        List<EnchantmentData> enchantments = new ArrayList<>();
+        NBTTagList enchantmentTags = getEnchantmentTags(stack);
+        if (enchantmentTags == null) return enchantments;
+
+        for (int i = 0; i < enchantmentTags.tagCount(); ++i) {
+            NBTTagCompound enchTag = enchantmentTags.getCompoundTagAt(i);
+            int id = enchTag.getInteger(VANILLA_TAG_ID);
             Enchantment enchantment = Enchantment.getEnchantmentByID(id);
             if (enchantment == null) {
                 warnUnknownEnchantment(id);
                 continue;
             }
-            int level = nbttagcompound.getShort(VANILLA_TAG_LEVEL);
+            int level = enchTag.getShort(VANILLA_TAG_LEVEL);
             enchantments.add(new EnchantmentData(enchantment, level));
         }
 
@@ -55,35 +65,38 @@ public class EnchantmentUtil {
     }
 
     public static boolean isSingleAndMatches(ItemStack first, Enchantment enchantment, short level) {
-        NBTTagList enchantments = ItemEnchantedBook.getEnchantments(first);
-        if (enchantments.tagCount() != 1) return false;
-        NBTTagCompound nbttagcompound = enchantments.getCompoundTagAt(0);
-        int id = nbttagcompound.getShort(VANILLA_TAG_ID);
+        NBTTagList enchantments = getEnchantmentTags(first);
+        if (enchantments == null || enchantments.tagCount() != 1) return false;
+
+        NBTTagCompound enchTag = enchantments.getCompoundTagAt(0);
+        int id = enchTag.getInteger(VANILLA_TAG_ID);
         Enchantment ench = Enchantment.getEnchantmentByID(id);
         if (ench == null) {
             warnUnknownEnchantment(id);
             return false;
         }
-        if (ench != enchantment) return false;
-        int lvl = nbttagcompound.getShort(VANILLA_TAG_LEVEL);
-        return lvl == level;
+
+        return ench == enchantment && enchTag.getShort(VANILLA_TAG_LEVEL) == level;
+    }
+
+    public static @Nullable NBTTagCompound findEnchTagInStack(Enchantment enchantment, ItemStack stack) {
+        NBTTagList enchantmentTags = getEnchantmentTags(stack);
+        if (enchantmentTags == null) return null;
+        return findEnchTagInStoredEnchantments(enchantment, enchantmentTags);
     }
 
     public static @Nullable NBTTagCompound findEnchTagInStoredEnchantments(Enchantment enchantment, NBTTagList storedEnchantments) {
-        NBTTagCompound found = null;
         for (int i = 0; i < storedEnchantments.tagCount(); ++i) {
-            NBTTagCompound nbttagcompound = storedEnchantments.getCompoundTagAt(i);
-            int id = nbttagcompound.getShort(EnchantmentUtil.VANILLA_TAG_ID);
+            NBTTagCompound enchTag = storedEnchantments.getCompoundTagAt(i);
+            int id = enchTag.getInteger(VANILLA_TAG_ID);
             Enchantment ench = Enchantment.getEnchantmentByID(id);
             if (ench == null) {
-                EnchantmentUtil.warnUnknownEnchantment(id);
+                warnUnknownEnchantment(id);
                 continue;
             }
-            if (ench == enchantment) {
-                found = nbttagcompound;
-                break;
-            }
+
+            if (ench == enchantment) return enchTag;
         }
-        return found;
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 package io.github.kurrycat2004.enchlib.core;
 
+import io.github.kurrycat2004.enchlib.config.settings.ClientSettings;
 import io.github.kurrycat2004.enchlib.config.settings.ServerSettings;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -12,13 +13,9 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 public class EnchLibEarly implements IFMLLoadingPlugin, IEarlyMixinLoader {
-    private static final BooleanSupplier TRUE_SUPPLIER = () -> true;
-    private static final BooleanSupplier FALSE_SUPPLIER = () -> false;
-
     private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new HashMap<>() {
         {
-            put("mixins.enchlib.early.tooltip.json", TRUE_SUPPLIER);
-            put("mixins.enchlib.early.enchlevel.json", () -> ServerSettings.INSTANCE.enchLevelTranslation != ServerSettings.EnchLevelTranslation.VANILLA);
+            put("mixins.enchlib.early.enchlevel.json", () -> ClientSettings.INSTANCE.enchLevelTranslationEnabled);
             put("mixins.enchlib.early.optimization.json", () -> ServerSettings.INSTANCE.optimizeItemHandler);
         }
     };
@@ -30,7 +27,7 @@ public class EnchLibEarly implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public boolean shouldMixinConfigQueue(String mixinConfig) {
-        return MIXIN_CONFIGS.getOrDefault(mixinConfig, FALSE_SUPPLIER).getAsBoolean();
+        return MIXIN_CONFIGS.getOrDefault(mixinConfig, () -> false).getAsBoolean();
     }
 
     @Override

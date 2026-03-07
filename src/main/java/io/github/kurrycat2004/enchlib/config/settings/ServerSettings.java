@@ -28,17 +28,6 @@ public class ServerSettings {
     @Config.RangeInt(min = 0)
     public int enchantedBookStackSize = 0;
 
-    public enum EnchLevelTranslation {
-        NUMBERS,
-        ROMAN_NUMERALS,
-        VANILLA
-    }
-
-    @Config.RequiresMcRestart
-    @Config.LangKey(Tags.MODID + ".config.server_settings.ench_level_translation")
-    @Config.Comment("Overwrites the enchantment level translation to fully support roman numerals (up to 3999) or use simple numbers. Set to VANILLA to get vanilla behaviour / allow other mods to overwrite it.")
-    public EnchLevelTranslation enchLevelTranslation = EnchLevelTranslation.ROMAN_NUMERALS;
-
     @Config.RequiresMcRestart
     @Config.LangKey(Tags.MODID + ".config.server_settings.optimize_item_handler")
     @Config.Comment("Optimizes common item handler operations for the enchlib. This should have no impact on performance for non-enchlib item handlers, but a pretty big impact for enchlib. The mixins themselves should be compatible with everything.")
