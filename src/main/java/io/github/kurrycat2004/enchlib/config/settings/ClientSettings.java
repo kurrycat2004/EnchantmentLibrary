@@ -4,9 +4,7 @@ import io.github.kurrycat2004.enchlib.Tags;
 import io.github.kurrycat2004.enchlib.config.ConfigManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class ClientSettings {
     @Config.Ignore
     public static final ClientSettings INSTANCE = new ClientSettings();
